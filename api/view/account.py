@@ -41,7 +41,7 @@ class Account(viewsets.ModelViewSet):
         phone = request.data.get("phone")
         ret = {"code": 1000}
         try:
-            user_list = models.User.objects.filter(parent_user__phone=phone)
+            user_list = models.User.objects.filter(parent_user__phone=phone, status_id__gt=1)
             us = UserModelSerializer(user_list, many=True, context={'request': request})
             ret["data"] = us.data
         except:
@@ -50,6 +50,12 @@ class Account(viewsets.ModelViewSet):
         return Response(ret)
 
 
-def account_examine(request):
-    if request.method == "PUT":
-        pass
+class AccountExamine(APIView):
+    def put(self, request):
+        user_id = int(request.data.get("user_id"))
+        user = models.User.objects.filter(pk=user_id).update(status=2)
+        ret = {"code": 1000}
+        if not user:
+            ret["code"] = 1001
+            ret["error"] = "发生错误"
+        return Response(ret)
