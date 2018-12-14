@@ -43,7 +43,7 @@ class Account(viewsets.ModelViewSet):
         try:
             user_list = models.User.objects.filter(parent_user__phone=phone)
             us = UserModelSerializer(user_list, many=True, context={'request': request})
-            ret["data"]: us.data
+            ret["data"] = us.data
         except:
             ret["code"] = 1001
             ret["error"] = "发生错误"
